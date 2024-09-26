@@ -1,0 +1,101 @@
+% --------------------------------------------------------------
+% This is all preamble stuff that you don't have to worry about.
+% Head down to where it says "Start here"
+% --------------------------------------------------------------
+ 
+\documentclass[12pt]{article}
+
+\usepackage[margin=1in]{geometry} 
+\usepackage{amsmath,amsthm,amssymb,listings,xcolor,graphicx, subfig, subcaption, enumerate,framed}
+ 
+\newenvironment{solution}{\begin{proof}[Solution]}{\end{proof}}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.97,0.97,0.97}
+\lstdefinestyle{pystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\small,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+\lstset{style=pystyle}
+
+\graphicspath{{./figures}}
+ 
+\begin{document}
+ 
+\title{Homework 4: Orthogonal Projections}
+\author{Matthew Luyten\\ %replace with your name
+ECE6250}
+
+\maketitle
+
+\begin{enumerate}
+\item[Problem 4.1] Summary and Context of Orthogonal Projections
+
+This week, we learned about the projection operator, orthogonal projections, the Gram-Schmidt algorithm. At 
+the end of this week, we were also introduced to the cosine transform. 
+
+Prof. Anderson introduced the last couple of tools we need to start implementing new transforms, and it even introduced 
+us to an alternative to the
+Fourier transform: the cosine transform. First, we learned about the projection operator that transforms any
+point to its closest approximation in a subset. This polishes off the linear approximation subjects from last week.
+We also learned how to turn a set of vectors that span a space and turn them into an orthobasis. Orthobases make 
+linear approximation significantly easier, so it is convenient that we have a tool to turn any span into an 
+orthobasis.
+
+Lastly, we leaned about the cosine transform, which is an alternative to the Fourier transform. This is an important 
+step as we head into learning about the discrete cosine transform and its usage in JPEG compression.
+
+\newpage
+
+\item[Problem 4.3] Gram-Schmidt Algorithm
+
+gramschmidt function:
+\begin{lstlisting}[language=matlab]
+function Q = gramschmidt(A)
+    sz = size(A);
+    K = sz(2);
+    Q = zeros(sz);
+    for i = 1:K
+        Q(:,i) = A(:,i);
+        for j = 1:i
+            Q(:,i) = Q(:,i) - A(:,i)'*Q(:,j)*Q(:,j);
+        end
+        Q(:,i) = Q(:,i) / norm(Q(:,i));
+    end
+end
+\end{lstlisting}
+
+Code used to test gramschmidt function:
+\begin{lstlisting}[language=matlab]
+load("hw_gramschmidt.mat");
+Q = gramschmidt(A);
+rank([A Q])
+max(max(abs(eye(50)-Q'*Q)))
+\end{lstlisting}
+
+\begin{framed}
+    rank([A B]) = 50
+
+    max(max(abs(eye(50)-Q'*Q))) = 6.6613e-16
+\end{framed}
+
+\end{enumerate}
+
+
+\end{document}

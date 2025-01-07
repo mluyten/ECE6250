@@ -1,0 +1,325 @@
+% This LaTeX was auto-generated from MATLAB code.
+% To make changes, update the MATLAB code and export to LaTeX again.
+
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{epstopdf}
+\usepackage[table]{xcolor}
+\usepackage{matlab}
+\usepackage[paperheight=795pt,paperwidth=614pt,top=72pt,bottom=72pt,right=72pt,left=72pt,heightrounded]{geometry}
+
+\sloppy
+\epstopdfsetup{outdir=./}
+\graphicspath{ {./HW10_media/} }
+
+\begin{document}
+
+\title{Homework 10: BLUE, Total Least Squares, and Computing LS Solutions}
+\author{Matthew Luyten\\
+ECE6250}
+
+\maketitle
+
+\matlabheading{Problem 10.1}
+
+\vspace{1em}
+\begin{par}
+\begin{flushleft}
+This week, we learned BLUE, Total Least Squares, and learned how to select an LS solution method based on
+the structure and behavior of the problem at hand. First, BLUE gave us a tool to make optimal approximations
+for sytems with i.i.d. zero mean noise. Presumably, if the noise wide-sense stationary and non-zero mean,
+this approach works, but the covariance matrix will become a correlation matrix. We also learned total least
+squares, which adds another tool to the vast linear inverse problem toolset. Given the size of our toolkit,
+the final topic for this week helped clarify which tools to use for each problem. For example, tikhonov
+regularization is an excellent tool as long as the SVD is not provided. However, if one has an SVD for
+a linear inverse problem, then a low-rank approximation is easier to ascertain. In addition to these tips,
+we learned about the computation complexity associated with solving least-squares problems with matrices
+of a particular structure. This also informs our tool choice.
+\end{flushleft}
+\end{par}
+
+\newpage
+
+\matlabheading{Problem 10.4}
+
+\begin{par}
+\begin{flushleft}
+$\mathit{\mathbf{A}}=\left\lbrack \begin{array}{ccc}
+2 & 4 & -1\\
+1 & -2 & 1\\
+4 & 0 & 1\\
+5 & 6 & -1\\
+8 & -4 & 2
+\end{array}\right\rbrack$, $\mathit{\mathbf{y}}=\left\lbrack \begin{array}{c}
+6\ldotp 1709\\
+-1\ldotp 6492\\
+6\ldotp 6324\\
+13\ldotp 8419\\
+4\ldotp 9064
+\end{array}\right\rbrack$, $R=\left\lbrack \begin{array}{ccccc}
+1 & 1/3 & 1/9 & 1/27 & 1/81\\
+1/3 & 1 & 1/3 & 1/9 & 1/27\\
+1/9 & 1/3 & 1 & 1/3 & 1/9\\
+1/27 & 1/9 & 1/3 & 1 & 1/3\\
+1/81 & 1/27 & 1/9 & 1/3 & 1
+\end{array}\right\rbrack$
+\end{flushleft}
+\end{par}
+
+
+\vspace{1em}
+\begin{par}
+\begin{flushleft}
+\textit{Part A: }Find the best linear unbiased estimate $\hat{x} {\;}_{\textrm{blue}}$
+\end{flushleft}
+\end{par}
+
+\begin{par}
+$$\hat{x} {\;}_{\textrm{blue}} ={\left(A^T R^{-1} A\right)}^{-1} A^T R^{-1} y=\left\lbrack \begin{array}{c}
+0\ldotp 9270\\
+1\ldotp 9955\\
+2\ldotp 7406
+\end{array}\right\rbrack$$
+\end{par}
+
+\begin{par}
+\begin{flushleft}
+\textit{Part B: }Find the MSE for the BLUE estimate $\hat{x} {\;}_{\textrm{blue}}$
+\end{flushleft}
+\end{par}
+
+\begin{par}
+$$\mathrm{E}\left(||x-\hat{x} {\;}_{\textrm{blue}} ||_2^2 \right)=\textrm{trace}\left\lbrace {\left(A^T R^{-1} A\right)}^{-1} \right\rbrace =3\ldotp 1244$$
+\end{par}
+
+\begin{matlabcode}
+A = [2 4 -1; 1 -2 1; 4 0 1; 5 6 -1; 8 -4 2];
+y = [6.1709; -1.6492; 6.6345; 13.8419; 4.9064];
+R = toeplitz([1 1/3 1/9 1/27 1/81]);
+x_blue = inv(A'*inv(R)*A)*A'*(inv(R)*y);
+error = trace(inv(A'*(inv(R)*A)));
+display(x_blue);
+\end{matlabcode}
+\begin{matlaboutput}
+x_blue = 3x1    
+    0.9270
+    1.9955
+    2.7406
+
+\end{matlaboutput}
+\begin{matlabcode}
+fprintf("MSE: %.4f", error);
+\end{matlabcode}
+\begin{matlaboutput}
+MSE: 3.1244
+\end{matlaboutput}
+
+\newpage
+
+
+\matlabheading{Problem 10.5}
+
+\begin{matlabcode}
+A = [10000 10001; 10001 10002; 10002 10003; 
+    10003 10004; 10004 10005];
+b = [20001; 20003; 20005; 20007; 20009];
+x = [1 1]';
+\end{matlabcode}
+
+\begin{par}
+\begin{flushleft}
+\textit{Part A:} What is the condition number of $A^T A$?
+\end{flushleft}
+\end{par}
+
+\begin{par}
+\begin{flushleft}
+The condition number of $A^T A$ is 1.
+\end{flushleft}
+\end{par}
+
+\begin{matlabcode}
+[v, d] = eig(A'*A);
+condnum = d(end,end) / d(1,1);
+fprintf("Condition number: %.4f", condnum);
+\end{matlabcode}
+\begin{matlaboutput}
+Condition number: 16785606034063358.0000
+\end{matlaboutput}
+
+\begin{par}
+\begin{flushleft}
+\textit{Part B:} Compute the least-squares solution $\hat{x} ={\left(A^T A\right)}^{-1} A^T b$
+\end{flushleft}
+\end{par}
+
+\begin{par}
+\begin{flushleft}
+$\hat{x} {\;}_{\textrm{ls}} =\left\lbrack \begin{array}{c}
+1\ldotp 2140\\
+0\ldotp 7860
+\end{array}\right\rbrack$, $||x-\hat{x} {\;}_{\textrm{ls}} ||_2^2 =0\ldotp 0916$
+\end{flushleft}
+\end{par}
+
+\begin{matlabcode}
+x_ls = inv(A'*A)*A'*b;
+\end{matlabcode}
+\begin{matlaboutput}
+Warning: Matrix is close to singular or badly scaled. Results may be inaccurate. RCOND =  2.228514e-17.
+\end{matlaboutput}
+\begin{matlabcode}
+display(x_ls);
+\end{matlabcode}
+\begin{matlaboutput}
+x_ls = 2x1    
+    4.6881
+   -2.6477
+
+\end{matlaboutput}
+\begin{matlabcode}
+ls_error = norm(x-x_ls)^2
+\end{matlabcode}
+\begin{matlaboutput}
+ls_error = 26.9079
+\end{matlaboutput}
+
+\begin{par}
+\begin{flushleft}
+\textit{Part C:} Compute the QR decomposition solution
+\end{flushleft}
+\end{par}
+
+\begin{par}
+\begin{flushleft}
+r = rank\{$A$\}, $A=Q\;R$, and $\hat{x} =R_r^{-1} \left(Q_r^T \;b\right)$where $Q_r$ is a matrix of the first r columns of $Q$ and $R_r$ is the first r rows of $R$
+\end{flushleft}
+\end{par}
+
+\begin{par}
+\begin{flushleft}
+$\hat{x} {\;}_{\textrm{qr}} =\left\lbrack \begin{array}{c}
+1\ldotp 0\\
+1\ldotp 0
+\end{array}\right\rbrack$, $||x-\hat{x} {\;}_{\textrm{ls}} ||_2^2 =2\ldotp 1797\times {10}^{-16}$
+\end{flushleft}
+\end{par}
+
+\begin{matlabcode}
+[Q, R] = qr(A);
+r = rank(A);
+x_qr = inv(R(1:r,1:r))*(Q(:,1:r)'*b);
+display(x_qr);
+\end{matlabcode}
+\begin{matlaboutput}
+x_qr = 2x1    
+    1.0000
+    1.0000
+
+\end{matlaboutput}
+\begin{matlabcode}
+qr_error = norm(x-x_qr)^2
+\end{matlabcode}
+\begin{matlaboutput}
+qr_error = 2.1797e-16
+\end{matlaboutput}
+
+\begin{par}
+\begin{flushleft}
+\textit{Part D:} Compute the Colesky factorization solution
+\end{flushleft}
+\end{par}
+
+\begin{enumerate}
+\setlength{\itemsep}{-1ex}
+   \item{\begin{flushleft} Compute $A_0 =A^T A$ \end{flushleft}}
+   \item{\begin{flushleft} Compute Cholesky Factorization of $A_0$ such that $A_0 =A^T A=R^T R$ where $R$ is upper triangular \end{flushleft}}
+   \item{\begin{flushleft} Compute $x={{\left(R\right)}^{-1} \left(R^T \right)}^{-1} A^T b$ \end{flushleft}}
+\end{enumerate}
+
+\begin{par}
+\begin{flushleft}
+$\hat{x} {\;}_{\textrm{chol}} =\left\lbrack \begin{array}{c}
+1\ldotp 3247\\
+0\ldotp 6753
+\end{array}\right\rbrack$, $||x-\hat{x} {\;}_{\textrm{chol}} ||_2^2 =0\ldotp 2109$
+\end{flushleft}
+\end{par}
+
+\begin{matlabcode}
+R = chol(A'*A);
+x_chol = inv(R)*(inv(R')*A'*b);
+display(x_chol);
+\end{matlabcode}
+\begin{matlaboutput}
+x_chol = 2x1    
+    1.3247
+    0.6753
+
+\end{matlaboutput}
+\begin{matlabcode}
+chol_error = norm(x-x_chol)^2
+\end{matlabcode}
+\begin{matlaboutput}
+chol_error = 0.2109
+\end{matlaboutput}
+
+\begin{par}
+\begin{flushleft}
+\textit{Part E:} Compute the ls solution with Matlab backslash (\textbackslash{})
+\end{flushleft}
+\end{par}
+
+\begin{par}
+\begin{flushleft}
+$\hat{x} {\;}_{\textrm{ml}} =\left\lbrack \begin{array}{c}
+1\ldotp 0\\
+1\ldotp 0
+\end{array}\right\rbrack$, $||x-\hat{x} {\;}_{\textrm{ml}} ||_2^2 =1\ldotp 2093\times {10}^{-16}$
+\end{flushleft}
+\end{par}
+
+\begin{par}
+\begin{flushleft}
+This indicates that matlab backslash (\textbackslash{}) uses QR decomposition.
+\end{flushleft}
+\end{par}
+
+\begin{matlabcode}
+x_ml = A\b;
+display(x_ml);
+\end{matlabcode}
+\begin{matlaboutput}
+x_ml = 2x1    
+    1.0000
+    1.0000
+
+\end{matlaboutput}
+\begin{matlabcode}
+ml_error = norm(x-x_ml)^2
+\end{matlabcode}
+\begin{matlaboutput}
+ml_error = 1.2093e-16
+\end{matlaboutput}
+
+\begin{par}
+\begin{flushleft}
+\textit{Part F: }Compare the results of B-F
+\end{flushleft}
+\end{par}
+
+\begin{par}
+\begin{flushleft}
+Cholesky factorization and QR decomposition both produce solutions closer to 1 than the standard least-squares solution. This makes sense, as the system is overdetermined. However, only QR decomposition was able to produce the original value of x.
+\end{flushleft}
+\end{par}
+
+\end{document}

@@ -1,0 +1,70 @@
+% --------------------------------------------------------------
+% This is all preamble stuff that you don't have to worry about.
+% Head down to where it says "Start here"
+% --------------------------------------------------------------
+ 
+\documentclass[12pt]{article}
+
+\usepackage[margin=1in]{geometry} 
+\usepackage{amsmath,amsthm,amssymb,listings,xcolor,graphicx, subfig, subcaption, enumerate,framed}
+ 
+\newenvironment{solution}{\begin{proof}[Solution]}{\end{proof}}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.97,0.97,0.97}
+\lstdefinestyle{pystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\small,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+\lstset{style=pystyle}
+
+\graphicspath{{./figures}}
+ 
+\begin{document}
+ 
+\title{Homework 7: Riesz Bases, B-Splines, Eigenvectors, and Eigenvalues}
+\author{Matthew Luyten\\
+ECE6250}
+
+\maketitle
+
+\begin{enumerate}
+\item[Problem 6.1] Summary and Context of Riesz Bases, B-Splines, Eigenvalue Decomposition
+
+This week(s), we covered Riesz Bases, B-Splines, the Linear Inverse Problem, and Eigenvalue Decomposition. This was
+a broad selection of topics for this assignement, but it made for some interesting problems. Reisz bases and B-Splines
+rounded off our learning about signal projection into different spaces using a variety of different bases. Riesz bases
+provide another tool in this toolkit that allow us to use infinite bases. While they are not orthonormal, they have
+properties that still make them convenient for projections. One applications of these is B-splines, which I was fist
+introduced to in Excel.
+
+The linear inverse problem set up the problem statement for the next set of lectures we will cover, like eigenvalue
+decomposition and SVD. Interestingly enough, we are doing something very similar in ECE6601 and using Monic Cholesky
+decomposition to predict the outcomes of a random process.
+
+Eigenvalue decomposition was an important review and a pleasant change of pace. It heavily underpins linear algebra,
+so it is very important to have a solid understanding of it.
+
+\newpage
+
+
+\end{enumerate}
+
+
+\end{document}
